@@ -25,6 +25,49 @@ class SbbApplicationTests {
 	@Autowired //객체를 자동 주입 , 디펜던시 인젝션(DI) , JPA의 메소드를 사용, findAll(), findById(), save(), delete()
 	private AnswerRepository answerRepository;
 	
+	/*Answer 테이블에 더미 데이터 입력*/
+	
+	@Test
+	public void insertAnswer() {
+		Question q =null;
+		Answer a = new Answer();
+		
+		//Question 객체 질문에 대한 값을 가지고 와서 answer question필드에 넣어준다.
+		Optional<Question> op = null;
+		
+		
+			op = this.questionRepository.findById(2);
+		
+		q = op.get();
+		
+		a.setContent("2번 글에 대한 답변 입니다.-3");
+		a.setCreateDate(LocalDateTime.now());
+		a.setQuestion(q);
+		this.answerRepository.save(a);
+		
+	}
+	
+	/*question 테이블에 for 문을 사용해서 더미값 1000개 insert*/
+	/*
+	@Test
+	public void insert1000() {
+		Question q = null;
+		
+		
+		for(int i=0;i<1000;i++) {
+			q = new Question();
+			q.setSubject("제목-"+i);
+			q.setContent("내용-"+i);
+			q.setCreateDate(LocalDateTime.now());
+			
+			
+			this.questionRepository.save(q);
+		}
+	}
+	
+	
+	*/
+	/*
 	@Transactional //아래의 메소드가 하나의 트랜잭션으로 작동 되도록 설정 테스트 환경에서만 적용 
 	@Test
 	public void testjpa8() {
@@ -50,7 +93,7 @@ class SbbApplicationTests {
 	
 	
 	
-	
+	*/
 	/*답변 레코드 가져오기*/
 	/*
 	@Test

@@ -5,30 +5,98 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1> 질문 테이블의 리스트를 출력하는 view 페이지 입니다</h1>
-	<hr>
-	<table> 
-		<tr>
-			<th>제목</th>
-			<th>내용</th>
-			<th>작성일시</th>
-		</tr>
-	
-	<!-- 타임리프(Thymeleaf) 를 사용해서 루푸돌려서 출력 -->
-		<!-- th:타임리프 문법 시작 문법 -->
-	<!-- 
+<html layout:decorate="~{layout}">
+
+<h1>질문 테이블의 리스트를 출력하는 view 페이지 입니다</h1>
+<hr>
+
+<div layout:fragment="content" class="container my-3">
+
+	<table class="table">
+		<thead class="table-dark">
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성일시</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<!-- 타임리프(Thymeleaf) 를 사용해서 루푸돌려서 출력 -->
+			<!-- th:타임리프 문법 시작 문법 -->
+			<!-- 
 		<tr th:each = "question : ${questionList}">
-			<td th:text= "${question.subject}"></td>
+			<td >
+				<a th:href="@{|/question/detail/${question.id}|}" th:text= "${question.subject}"></a>
+			</td>
 			<td th:text= "${question.content}"></td>
 			<td th:text= "${question.createDate}"></td>
 		</tr>
-	 -->	
-	 <tr th:each = "question : ${questionList}">
-			<td >[[${question.subject}]]</td>
-			<td>[[${question.content}]]</td>
-			<td>[[${question.createDate}]]</td>
-		</tr>
-	
+	  -->
+
+
+			<!-- thymeleaf 에서 링크를 처리 : @{ } -->
+			<!-- @{|String + 변수|} : 문자열과 변수를 연결  -->
+
+			<!-- 
+	  <tr th:each = "question, loop : ${questionList}">
+	  -->
+			<tr th:each="question, loop : ${paging}">
+				<!-- 
+				<td th:text="${loop.count}"> 번호 </td>
+				 -->
+				 <!-- 
+				 	번호 = 전체게시물 = (현제페이지*페이징당게시물수) = 나열인덱스
+				  -->
+				 <td th:text="${paging.getTotalElements -(paging.number*paging.size)-loop.index}">번호</td>
+				<!-- 
+				<td th:text="${loop.count}">번호</td>
+				 -->
+				<!-- 번호를 자동으로 카운트 해준다 -->
+				<td><a th:href="@{|/question/detail/${question.id}|}">[[${question.subject}]]</a></td>
+
+				<td>[[${#temporals.format(question.createDate, 'yyyy-MM-dd
+					hh:mm')}]]</td>
+			</tr>
+
+		</tbody>
+
 	</table>
+	<!-- 페이징 터리 시작 -->
+	<div th:if="${!paging.isEmpty()}">
+		<ul class="pagination justify-content-center">
+			<!-- 이전페이지가 존재하지 않으면 이전에 링크를 비활성화 -->
+			<li class="page-item"
+				th:classappend="${!paging.hasPrevious} ? 'disabled'">
+				<!-- paging.number : 현제페이지 -->
+				<a class="page-link"th:href="@{|?page=${paging.number-1}|}">
+				이전</a>
+			</li>
+			
+			<!-- 첫 페이지 부터 마지막 페이지까지 루프를 돌려서 처리 -->
+			<li th:each="page : ${#numbers.sequence(0,paging.totalPages-1)}"
+				th:if="${page >= paging.number-1 and page <= paging.number+3}"
+				th:classappend="${page==paging.number} ? 'active'" class="page=item">
+			
+			<a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+			</li>
+			
+			
+			<!-- 다음을 처리하는 블락 -->
+			<li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+				<!-- paging.number : 현제페이지 -->
+				<a class="page-link"th:href="@{|?page=${paging.number+1}|}">
+				다음</a>
+			</li>
+		</ul>
+	</div>
+	<!-- 페이징 처리 끝 -->
+	<!-- 새글등록 -->
+	<a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+
+</div>
+
+</html>
+
 </body>
 </html>
