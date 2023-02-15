@@ -40,6 +40,11 @@ dependencies {
 	
 	//Spring 에서 제공해주는 유호성 검사 라이브러리 : from에서 반값이나 글자수 제한
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	//스프링 기반 인증과 권한을 담당하는 라이브러리 : 
+		// 인증(Authenticate)은 로그인을 의미한다.
+		// 권한(Authorize)은 인증된 사용자가 어떤것을 할수있는지를 의미한다.
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+ 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE'
 	
 	
 }
