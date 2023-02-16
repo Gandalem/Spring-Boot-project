@@ -3,6 +3,7 @@ package com.mysite.sbb.answer;
 import java.time.LocalDateTime;
 
 import com.mysite.sbb.question.Question;
+import com.mysite.sbb.user.SiteUser;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,4 +31,8 @@ public class Answer {
 	@ManyToOne	//Foreign key : 부모테이블의 PK, UK컬럼의 값을 참조햇 값을 할당
 	private Question question; //부모 테이블이 Question 테이블 Primary Key 를 참조 (Id)
 	
+	@ManyToOne
+	private SiteUser author;
+	
+	private LocalDateTime modifyDate;
 }

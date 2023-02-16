@@ -6,7 +6,10 @@
 			질문등록
 		</h5>
 		
-		<form th:action="@{/question/create}" th:object="${questionFrom}" method="post">
+		<form th:object="${questionFrom}" method="post">
+			
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+			
 			<!-- 오류 메세지 출력 부분 -->
 			
 			<!-- 외부파일에서 import -->
