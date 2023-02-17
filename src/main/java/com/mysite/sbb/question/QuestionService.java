@@ -9,11 +9,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.mysite.sbb.DateNotFoundExceptoin;
+import com.mysite.sbb.answer.Answer;
 import com.mysite.sbb.user.SiteUser;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor // DI (생성자 객체 주입)
@@ -28,7 +36,7 @@ public class QuestionService {
 		return this.questionRepository.findAll();
 	}
 	*/
-	public Page<Question> getList(int page){
+	public Page<Question> getList(int page,String kw){
 		
 		//최신글을 먼저 출력 하기, 날짜 컬럼 (createDate) 을 desc 해서 출력
 		List<Sort.Order> sorts = new ArrayList();
@@ -37,7 +45,9 @@ public class QuestionService {
 		//Pageable 객체에 두개의 값을 담아서 매개변수로 던짐 : 0,1,2,3
 		Pageable pageable = PageRequest.of(page, 10,Sort.by(sorts));
 		
-		return this.questionRepository.findAll(pageable);
+		Specification<Question> spec = search(kw);
+		
+		return this.questionRepository.findAll(spec,pageable);
 	}
 	
 	
@@ -78,6 +88,40 @@ public class QuestionService {
 	public void delete(Question question) {
 		 this.questionRepository.delete(question);
 		 }
+	public void vote(Question question,SiteUser siteUser) {
+		
+		question.getVoter().add(siteUser);
+		
+		this.questionRepository.save(question);
+	}
 	
+	private Specification<Question> search(String kw){
+		
+		return new Specification<Question>() {
+		
+			private static final long serialVerstionUID = 1L;
+			
+			@Override
+			public Predicate toPredicate(Root<Question> q , CriteriaQuery<?> query,CriteriaBuilder cb) {
+				
+				query.distinct(true);
+				
+				Join<Question, SiteUser> u1 = q.join("author",JoinType.LEFT);
+				
+				Join<Question, Answer> a = q.join("answerList", JoinType.LEFT);
+				
+				Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
+				 
+				return cb.or(cb.like(q.get("subject"), "%" + kw + "%"), // 제목
+						 
+				cb.like(q.get("content"), "%" + kw + "%"), // 내용
+				cb.like(u1.get("username"), "%" + kw + "%"), // 질문 작성자
+				cb.like(a.get("content"), "%" + kw + "%"), // 답변 내용
+				cb.like(u2.get("username"), "%" + kw + "%")); // 답변 작성자
+				
+			}
+			
+		};
+	}
 	
 }

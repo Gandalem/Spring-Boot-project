@@ -82,10 +82,10 @@ public class QuestionController {
 	// 2월 14일 페이징 처리를 위해 수정됨
 	// http://localhost/qustion/list/?page=1
 	@GetMapping("/question/list")
-	public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+	public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,@RequestParam(value="kw",defaultValue="") String kw) {
 
 		// 비즈니스 로직 처리
-		Page<Question> paging = this.questionService.getList(page);
+		Page<Question> paging = this.questionService.getList(page,kw);
 
 		// model 객체의 결과롤 받은 paging 객체를 client로 전송
 		model.addAttribute("paging", paging);
@@ -152,6 +152,8 @@ public class QuestionController {
 		return "question_from";
 	}
 	
+	//현제 로그인한 사용자 정보를 확인해보기
+	
 	@PreAuthorize("isAuthenticated()")
 	 @PostMapping("/question/modify/{id}")
 	 public String questionModify(@Valid QuestionFrom questionFrom, BindingResult bindingResult, Principal principal, @PathVariable("id") Integer id) {
@@ -176,5 +178,18 @@ public class QuestionController {
 	 this.questionService.delete(question);
 	 return "redirect:/";
 	 }
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("question/vote/{id}")
+	public String questionVote(Principal principal, @PathVariable("id") Integer id) {
+		
+		Question question = this.questionService.getQuestion(id);
+		SiteUser siteUser = this.userService.getUser(principal.getName());
+		
+		this.questionService.vote(question, siteUser);
+		
+		return String.format("redirect:/question/detail/%s", id);
+		
+	}
 	
 }

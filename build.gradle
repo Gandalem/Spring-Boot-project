@@ -45,6 +45,8 @@ dependencies {
 		// 권한(Authorize)은 인증된 사용자가 어떤것을 할수있는지를 의미한다.
 	implementation 'org.springframework.boot:spring-boot-starter-security'
  	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE'
+ 	//마크다운 설치
+ 	implementation 'org.commonmark:commonmark:0.21.0'
 	
 	
 }
