@@ -53,5 +53,10 @@ public class Question {
 	private LocalDateTime modifyDate;
 	
 	@ManyToMany
-	Set<SiteUser> voter;
+	Set<SiteUser> voter; //한명의 사용자가 여러 질문에 투표 할수 있다.
+						 //하나의 질문에 여러명의 사용자가 투표할수 있다. 1번만 투표 가능하도록 test
+	
+	//List : 방의 번호(index)를 가지고 중복된 값을 저장할수있다.
+	//set : 자료형은 중복된 갑ㅆ을 넣을수 없는 자료형
+		//set은 방번호를 가지지 않는다.
 }

@@ -89,7 +89,7 @@ public class QuestionController {
 
 		// model 객체의 결과롤 받은 paging 객체를 client로 전송
 		model.addAttribute("paging", paging);
-
+		model.addAttribute("kw", kw);
 		return "question_list";
 	}
 
@@ -179,6 +179,10 @@ public class QuestionController {
 	 return "redirect:/";
 	 }
 	
+	//id: question 객체
+	//principal : 현제 투표하는 객체를 가지고 옴
+	
+	//2월 17일 : 질문의 추천 기능 추가
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("question/vote/{id}")
 	public String questionVote(Principal principal, @PathVariable("id") Integer id) {
